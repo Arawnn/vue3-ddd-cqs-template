@@ -35,8 +35,10 @@ export class User extends Entity<UserId> {
     this.addDomainEvent(new UserSignedInEvent(this))
   }
 
-  signUp(): void {
-    this.addDomainEvent(new UserSignedUpEvent(this))
+  static signUp(id: UserId, email: Email): User {
+    const user = new User(id, email, new Date())
+    user.addDomainEvent(new UserSignedUpEvent(user))
+    return user
   }
 
   signOut(): void {
