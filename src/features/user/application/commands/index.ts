@@ -1,3 +1,7 @@
 export { SignUpCommand } from './SignUpCommand'
 export { SignInCommand } from './SignInCommand'
 export { SignOutCommand } from './SignOutCommand'
+export { AuthCommandFactory } from './AuthCommandFactory'
+export { SignUpCommandHandler } from './SignUpCommandHandler'
+export { SignInCommandHandler } from './SignInCommandHandler'
+export { SignOutCommandHandler } from './SignOutCommandHandler'

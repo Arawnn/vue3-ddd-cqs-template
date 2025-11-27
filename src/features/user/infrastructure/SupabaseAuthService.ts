@@ -1,4 +1,4 @@
-import type { AuthRepository, SignInInput, SignUpInput } from '../domain/AuthRepository'
+import type { AuthResult, SignInInput, SignUpInput } from '../domain/IAuthService'
 import {
   EmailAlreadyExistsError,
   EmailNotConfirmedError,
@@ -8,9 +8,10 @@ import {
 import type { User } from '../domain/User'
 import { supabaseClient } from './supabaseClient'
 import { UserMapper } from './UserMapper'
+import type { IAuthService } from '../domain/IAuthService'
 
-export class SupabaseAuthRepository implements AuthRepository {
-  async signUp(input: SignUpInput): Promise<User> {
+export class SupabaseAuthService implements IAuthService {
+  async signUp(input: SignUpInput): Promise<AuthResult> {
     const { data, error } = await supabaseClient.auth.signUp({
       email: input.email.value,
       password: input.password.value,
@@ -34,10 +35,14 @@ export class SupabaseAuthRepository implements AuthRepository {
       throw new Error('Failed to create user')
     }
 
-    return UserMapper.toDomain(data.user)
+    return {
+      id: data.user.id,
+      email: data.user.email ?? '',
+      createdAt: new Date(data.user.created_at),
+    }
   }
 
-  async signIn(input: SignInInput): Promise<User> {
+  async signIn(input: SignInInput): Promise<AuthResult> {
     const { data, error } = await supabaseClient.auth.signInWithPassword({
       email: input.email.value,
       password: input.password.value,
@@ -59,7 +64,12 @@ export class SupabaseAuthRepository implements AuthRepository {
       throw new InvalidCredentialsError()
     }
 
-    return UserMapper.toDomain(data.user)
+    const user = UserMapper.toDomain(data.user)
+    return {
+      id: data.user.id,
+      email: user.email.value,
+      createdAt: user.createdAt,
+    }
   }
 
   async getCurrentUser(): Promise<User | null> {

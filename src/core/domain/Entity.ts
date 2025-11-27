@@ -1,7 +1,7 @@
 import type { DomainEvent } from './DomainEvent'
 import type { ValueObject } from './ValueObject'
-
-export abstract class Entity<Id extends ValueObject<unknown>> {
+import type { HasDomainEvents } from './EventBus'
+export abstract class Entity<Id extends ValueObject<unknown>> implements HasDomainEvents {
   private _domainEvents: DomainEvent[] = []
 
   protected constructor(private readonly _id: Id) {}

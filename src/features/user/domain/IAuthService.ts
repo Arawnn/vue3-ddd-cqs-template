@@ -12,9 +12,15 @@ export interface SignInInput {
   password: Password
 }
 
-export interface AuthRepository {
-  signUp(input: SignUpInput): Promise<User>
-  signIn(input: SignInInput): Promise<User>
-  getCurrentUser(): Promise<User | null>
+export interface AuthResult {
+  id: string
+  email: string
+  createdAt: Date
+}
+
+export interface IAuthService {
+  signUp(input: SignUpInput): Promise<AuthResult>
+  signIn(input: SignInInput): Promise<AuthResult>
   signOut(): Promise<void>
+  getCurrentUser(): Promise<User | null>
 }

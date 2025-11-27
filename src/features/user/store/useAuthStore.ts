@@ -1,11 +1,13 @@
 import { defineStore } from 'pinia'
 import { ref, inject } from 'vue'
 import { User } from '../domain/User'
-import { Email } from '../domain/Email'
-import { Password } from '../domain/Password'
 import { AuthCommandFactoryKey, AuthQueryFactoryKey } from '@/app/providers/tokens'
 import type { IAuthCommandFactory } from '../application/commands/AuthCommandFactory'
 import type { IAuthQueryFactory } from '../application/queries/AuthQueryFactory'
+import { SignUpCommand } from '../application/commands/SignUpCommand'
+import { SignInCommand } from '../application/commands/SignInCommand'
+import { SignOutCommand } from '../application/commands/SignOutCommand'
+import { GetCurrentUserQuery } from '../application/queries/GetCurrentUserQuery'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
@@ -19,12 +21,8 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       isLoading.value = true
       error.value = null
-
-      const emailVO = new Email(email)
-      const passwordVO = new Password(password)
-
-      const command = authCommandFactory.createSignUpCommand()
-      user.value = await command.execute({ email: emailVO, password: passwordVO })
+      const signUpCommandHandler = authCommandFactory.createSignUpCommand()
+      user.value = await signUpCommandHandler.handle(new SignUpCommand(email, password))
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to sign up'
       throw err
@@ -38,11 +36,8 @@ export const useAuthStore = defineStore('auth', () => {
       isLoading.value = true
       error.value = null
 
-      const emailVO = new Email(email)
-      const passwordVO = new Password(password)
-
-      const command = authCommandFactory.createSignInCommand()
-      user.value = (await command?.execute({ email: emailVO, password: passwordVO })) ?? null
+      const signInCommandHandler = authCommandFactory.createSignInCommand()
+      user.value = await signInCommandHandler.handle(new SignInCommand(email, password))
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to sign in'
       throw err
@@ -56,8 +51,8 @@ export const useAuthStore = defineStore('auth', () => {
       isLoading.value = true
       error.value = null
 
-      const query = authQueryFactory.createGetCurrentUserQuery()
-      user.value = await query.execute()
+      const getCurrentUserQueryHandler = authQueryFactory.createGetCurrentUserQuery()
+      user.value = await getCurrentUserQueryHandler.query(new GetCurrentUserQuery(null))
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to load user'
     } finally {
@@ -70,8 +65,8 @@ export const useAuthStore = defineStore('auth', () => {
       isLoading.value = true
       error.value = null
 
-      const command = authCommandFactory.createSignOutCommand()
-      await command.execute()
+      const signOutCommandHandler = authCommandFactory.createSignOutCommand()
+      await signOutCommandHandler.handle(new SignOutCommand())
       user.value = null
       error.value = null
     } catch (err) {

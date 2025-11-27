@@ -1,5 +1,5 @@
 import { DomainError } from '@core/domain/errors/DomainError'
-
+//TODO create one file by error type
 export class InvalidCredentialsError extends DomainError {
   constructor(messageOrCause?: string | Error, cause?: Error) {
     if (typeof messageOrCause === 'string') {
