@@ -1,13 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, inject } from 'vue'
 import { User } from '../domain/User'
-import { AuthCommandFactoryKey, AuthQueryFactoryKey } from '@/app/providers/tokens'
-import type { IAuthCommandFactory } from '../application/commands/AuthCommandFactory'
-import type { IAuthQueryFactory } from '../application/queries/AuthQueryFactory'
+import { AuthCommandFactoryKey } from '@/app/providers/tokens'
+import type { IAuthCommandFactory } from '../application/commands/AuthCommandFactory' 
 import { SignUpCommand } from '../application/commands/SignUpCommand'
 import { SignInCommand } from '../application/commands/SignInCommand'
 import { SignOutCommand } from '../application/commands/SignOutCommand'
-import { GetCurrentUserQuery } from '../application/queries/GetCurrentUserQuery'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
@@ -15,7 +13,6 @@ export const useAuthStore = defineStore('auth', () => {
   const error = ref<string | null>(null)
 
   const authCommandFactory = inject<IAuthCommandFactory>(AuthCommandFactoryKey)!
-  const authQueryFactory = inject<IAuthQueryFactory>(AuthQueryFactoryKey)!
 
   const signUp = async (email: string, password: string) => {
     try {
@@ -41,20 +38,6 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Failed to sign in'
       throw err
-    } finally {
-      isLoading.value = false
-    }
-  }
-
-  const loadCurrentUser = async () => {
-    try {
-      isLoading.value = true
-      error.value = null
-
-      const getCurrentUserQueryHandler = authQueryFactory.createGetCurrentUserQuery()
-      user.value = await getCurrentUserQueryHandler.query(new GetCurrentUserQuery(null))
-    } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Failed to load user'
     } finally {
       isLoading.value = false
     }
@@ -88,7 +71,6 @@ export const useAuthStore = defineStore('auth', () => {
     signUp,
     signIn,
     signOut,
-    loadCurrentUser,
     clearError,
   }
 })

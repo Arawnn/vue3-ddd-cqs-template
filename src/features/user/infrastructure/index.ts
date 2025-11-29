@@ -1,4 +1,5 @@
 export { SupabaseAuthService } from './SupabaseAuthService'
 export { supabaseClient } from './supabaseClient'
 export { SupabaseUserRepository } from './SupabaseUserRepository'
+export { SupabaseUserReadRepository } from './SupabaseUserReadRepository'
 export { UserMapper } from './UserMapper'

@@ -5,10 +5,11 @@ import {
   InvalidCredentialsError,
   WeakPasswordError,
 } from '../domain/errors'
-import type { User } from '../domain/User'
 import { supabaseClient } from './supabaseClient'
 import { UserMapper } from './UserMapper'
 import type { IAuthService } from '../domain/IAuthService'
+import type { UserReadDTO } from '../application/queries/dto/UserReadDTO'
+import { UserReadMapper } from './UserReadMapper'
 
 export class SupabaseAuthService implements IAuthService {
   async signUp(input: SignUpInput): Promise<AuthResult> {
@@ -72,7 +73,7 @@ export class SupabaseAuthService implements IAuthService {
     }
   }
 
-  async getCurrentUser(): Promise<User | null> {
+  async getCurrentUser(): Promise<UserReadDTO | null> {
     const { data, error } = await supabaseClient.auth.getUser()
     if (error) {
       if (error.code === 'not_authenticated') {
@@ -85,7 +86,7 @@ export class SupabaseAuthService implements IAuthService {
       return null
     }
 
-    return UserMapper.toDomain(data.user)
+    return UserReadMapper.toDTO(data.user)
   }
 
   async signOut(): Promise<void> {
