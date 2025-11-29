@@ -8,8 +8,8 @@ import {
 import { supabaseClient } from './supabaseClient'
 import { UserMapper } from './UserMapper'
 import type { IAuthService } from '../domain/IAuthService'
-import type { UserReadDTO } from '../application/queries/dto/UserReadDTO'
 import { UserReadMapper } from './UserReadMapper'
+import type { User } from '../domain'
 
 export class SupabaseAuthService implements IAuthService {
   async signUp(input: SignUpInput): Promise<AuthResult> {
@@ -73,7 +73,7 @@ export class SupabaseAuthService implements IAuthService {
     }
   }
 
-  async getCurrentUser(): Promise<UserReadDTO | null> {
+  async getCurrentUser(): Promise<User | null> {
     const { data, error } = await supabaseClient.auth.getUser()
     if (error) {
       if (error.code === 'not_authenticated') {
@@ -86,7 +86,7 @@ export class SupabaseAuthService implements IAuthService {
       return null
     }
 
-    return UserReadMapper.toDTO(data.user)
+    return UserMapper.toDomain(data.user)
   }
 
   async signOut(): Promise<void> {

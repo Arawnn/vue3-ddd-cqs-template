@@ -1,6 +1,6 @@
 import { Email } from './Email'
 import { Password } from './Password'
-import type { UserReadDTO } from '../application/queries/dto/UserReadDTO'
+import { User } from '@/features/user/domain/User'
 
 export interface SignUpInput {
   email: Email
@@ -22,5 +22,5 @@ export interface IAuthService {
   signUp(input: SignUpInput): Promise<AuthResult>
   signIn(input: SignInInput): Promise<AuthResult>
   signOut(): Promise<void>
-  getCurrentUser(): Promise<UserReadDTO | null>
+  getCurrentUser(): Promise<User | null>
 }
