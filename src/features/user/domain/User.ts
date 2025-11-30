@@ -6,18 +6,15 @@ import { UserSignedUpEvent } from './events/UserSignedUpEvent'
 import { UserSignOutEvent } from './events/UserSignOutEvent'
 export class User extends Entity<UserId> {
   public readonly email: Email
-  public readonly createdAt: Date
   private _lastSignedInAt: Date | null = null
 
   private constructor(
     id: UserId,
     email: Email,
-    createdAt: Date,
     lastSignedInAt: Date | null = null,
   ) {
     super(id)
     this.email = email
-    this.createdAt = createdAt
     this._lastSignedInAt = lastSignedInAt
   }
 
@@ -25,8 +22,8 @@ export class User extends Entity<UserId> {
     return this._lastSignedInAt
   }
 
-  static create(id: UserId, email: Email, createdAt: Date): User {
-    const user = new User(id, email, createdAt)
+  static create(id: UserId, email: Email): User {
+    const user = new User(id, email)
     return user
   }
 

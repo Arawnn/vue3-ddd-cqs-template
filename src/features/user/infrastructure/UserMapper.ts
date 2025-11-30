@@ -12,7 +12,6 @@ export class UserMapper {
     return User.create(
       new UserId(supabaseUser.id),
       new Email(supabaseUser.email),
-      new Date(supabaseUser.created_at),
     )
   }
 }

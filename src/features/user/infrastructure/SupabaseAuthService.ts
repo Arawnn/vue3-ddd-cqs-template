@@ -8,7 +8,6 @@ import {
 import { supabaseClient } from './supabaseClient'
 import { UserMapper } from './UserMapper'
 import type { IAuthService } from '../domain/IAuthService'
-import { UserReadMapper } from './UserReadMapper'
 import type { User } from '../domain'
 
 export class SupabaseAuthService implements IAuthService {
@@ -38,8 +37,7 @@ export class SupabaseAuthService implements IAuthService {
 
     return {
       id: data.user.id,
-      email: data.user.email ?? '',
-      createdAt: new Date(data.user.created_at),
+      email: data.user.email ?? ''
     }
   }
 
@@ -69,7 +67,6 @@ export class SupabaseAuthService implements IAuthService {
     return {
       id: data.user.id,
       email: user.email.value,
-      createdAt: user.createdAt,
     }
   }
 

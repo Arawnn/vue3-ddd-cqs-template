@@ -15,7 +15,6 @@ export interface SignInInput {
 export interface AuthResult {
   id: string
   email: string
-  createdAt: Date
 }
 
 export interface IAuthService {
