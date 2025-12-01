@@ -1,28 +1,28 @@
 import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
-import { useUserReadStore } from '@/features/user/store/useUserReadStore'
+import { useAuthStore } from '@/features/user/store/useAuthStore'
 
 export async function authGuard(
   to: RouteLocationNormalized,
   _from: RouteLocationNormalized,
   next: NavigationGuardNext,
 ): Promise<void> {
-  const userReadStore = useUserReadStore()
+  const authStore = useAuthStore()
   const requiresAuth = to.meta.requiresAuth as boolean
   const isAuthPage = to.name === 'signin' || to.name === 'signup'
 
-  if (!userReadStore.user && !userReadStore.isLoading && !isAuthPage) {
+  if (!authStore.currentUser && !authStore.isLoading && !isAuthPage) {
     try {
-      await userReadStore.loadCurrentUser()
-      if (!userReadStore.user) {
-        userReadStore.clearError()
+      await authStore.loadCurrentUser()
+      if (!authStore.currentUser) {
+        authStore.clearError()
       }
     } catch (error) {
       console.error('Failed to load user:', error)
-      userReadStore.clearError()
+      authStore.clearError()
     }
   }
 
-  const isAuthenticated = !!userReadStore.user
+  const isAuthenticated = !!authStore.currentUser
 
   if (requiresAuth && !isAuthenticated) {
     next({ name: 'signin', query: { redirect: to.fullPath } })

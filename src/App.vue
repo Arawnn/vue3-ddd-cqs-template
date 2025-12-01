@@ -18,11 +18,12 @@ onMounted(async () => {
   if (route.path !== '/signin' && route.path !== '/signup') {
     try {
       await authStore.loadCurrentUser()
-      if (!authStore.user) {
+      if (!authStore.currentUser) {
         authStore.clearError()
       }
     } catch (error) {
       //TODO add proper logging here
+      console.error(error)
       authStore.clearError()
     }
   }

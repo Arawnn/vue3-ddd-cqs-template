@@ -1,11 +1,14 @@
 import { defineStore } from 'pinia'
-import { ref, inject } from 'vue'
+import { ref, inject, computed } from 'vue'
 import { User } from '../domain/User'
-import { AuthCommandFactoryKey } from '@/app/providers/tokens'
+import { AuthCommandFactoryKey, AuthQueryFactoryKey } from '@/app/providers/tokens'
 import type { IAuthCommandFactory } from '../application/commands/AuthCommandFactory'
 import { SignUpCommand } from '../application/commands/SignUpCommand'
 import { SignInCommand } from '../application/commands/SignInCommand'
 import { SignOutCommand } from '../application/commands/SignOutCommand'
+import type { IAuthQueryFactory } from '../application/queries/AuthQueryFactory'
+import { UserViewModels } from '../ui/viewmodels/UserViewModels'
+import { GetCurrentUserQuery } from '../application/queries/GetCurrentUserQuery'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null)
@@ -13,6 +16,12 @@ export const useAuthStore = defineStore('auth', () => {
   const error = ref<string | null>(null)
 
   const authCommandFactory = inject<IAuthCommandFactory>(AuthCommandFactoryKey)!
+  const authQueryFactory = inject<IAuthQueryFactory>(AuthQueryFactoryKey)!
+
+  const currentUser = computed(() => {
+    return user.value ? new UserViewModels(user.value as User) : null
+  })
+
 
   const signUp = async (email: string, password: string) => {
     try {
@@ -60,12 +69,27 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const loadCurrentUser = async () => {
+    try {
+      isLoading.value = true
+      error.value = null
+
+      const getCurrentUserQueryHandler = authQueryFactory.createGetCurrentUserQuery()
+      user.value = await getCurrentUserQueryHandler.query(new GetCurrentUserQuery(null))
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Failed to load user'
+    } finally {
+      isLoading.value = false
+    }
+  }
   const clearError = () => {
     error.value = null
   }
 
   return {
     user,
+    currentUser,
+    loadCurrentUser,
     isLoading,
     error,
     signUp,

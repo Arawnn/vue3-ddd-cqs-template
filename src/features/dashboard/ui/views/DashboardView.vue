@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserReadStore } from '@/features/user/store/useUserReadStore'
 import { useAuthStore } from '@/features/user/store/useAuthStore'
 
 const authStore = useAuthStore()
-const userReadStore = useUserReadStore()
 const router = useRouter()
 
-const userEmail = computed(() => userReadStore.user?.email || '')
-const isLoading = computed(() => userReadStore.isLoading)
+const userEmail = computed(() => authStore.currentUser?.email || '')
+const isLoading = computed(() => authStore.isLoading)
 
 const handleSignOut = async () => {
   try {
